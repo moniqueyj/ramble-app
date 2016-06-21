@@ -4,7 +4,9 @@
   "description": "Ramble App - private writing",
   "main": "server.js",
   "scripts": {
-    "test": "mocha"
+    "start": "node server.js",
+    "lint": "./node_modules/eslint/bin/eslint.js ./",
+    "test": "./node_modules/mocha/bin/mocha "
   },
   "repository": {
     "type": "git",
