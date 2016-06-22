@@ -12,7 +12,6 @@ const server = require('../server');
 const port = process.env.PORT || 3000;
 const baseUrl = `http://localhost:${port}/api`;
 
-const authRouter = require('../route/auth-router');
 const authController = require('../controller/auth-controller');
 const userController = require('../controller/user-controller');
 
@@ -100,11 +99,15 @@ describe('testing auth-router module', function(){
       .catch(done);
     });
 
-    it('should return status 200', (done) => {
+    it('should return status 200 and a token', (done) => {
       request.get(`${baseUrl}/signin`)
       .auth('test user', 'test password')
       .then( res => {
         expect(res.status).to.equal(200);
+        expect(res.text.length).to.equal(205);
+        // TODO: Find alternate way to test for token.
+        // Ex. Pass token as an object w/ property 'token:',
+        // then test for the returned obj containing 'token' property.
         done();
       })
       .catch(done);
@@ -136,4 +139,11 @@ describe('testing auth-router module', function(){
     });
   }); // end bad GET test module
 
+  it('should return status 401 for no body', (done) => {
+    request.get(`${baseUrl}/signin`)
+    .end((err, res) => {
+      expect(res.status).to.equal(401);
+      done();
+    });
+  });
 }); // end of auth-router test module
