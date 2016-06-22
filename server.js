@@ -11,7 +11,7 @@ const authRouter = require('./route/auth-router');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const mongoURI = process.env.MONGO_URI;
+const mongoURI = process.env.MONGO_URI || 'mongodb://localhost/rambledev';
 
 mongoose.connect(mongoURI);
 
