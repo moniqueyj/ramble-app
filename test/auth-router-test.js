@@ -1,7 +1,7 @@
 'use strict';
 
 process.env.APP_SECRET = 'something123';
-process.env.MONGODB_URI = `mongodb://localhost/rambletest`;
+process.env.MONGODB_URI = 'mongodb://localhost/rambletest';
 
 const debug = require('debug')('ramble:auth-router-test');
 const expect = require('chai').expect;
@@ -62,8 +62,27 @@ describe('testing auth-router module', function(){
       .catch(done);
     });
 
-    it('should return status 400 for no body', (done) =>{
-  // things
-    });
   }); // end POST test module
-}) // end of auth-router test module
+
+  describe('test bad POST /signup', function(){
+
+    it('should return status 400 for no body', (done) => {
+      request.post(`${baseUrl}/signup`)
+      .send({})
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        done();
+      });
+    });
+
+    it('should return status 400 for invalid body', (done) => {
+      request.post(`${baseUrl}/signup`)
+      .send({hello: 'goodbye'})
+      .end((err, res) => {
+        expect(res.status).to.equal(400);
+        done();
+      });
+    });
+  });
+
+}); // end of auth-router test module
