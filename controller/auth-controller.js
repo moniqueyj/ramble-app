@@ -17,6 +17,7 @@ exports.signup = function(reqBody){
 };
 
 exports.signin = function(auth){
+  debug('signinPromise');
   return new Promise((resolve, reject) => {
     User.findOne({username:auth.username})
     .then(user => user.compareHash(auth.password))
@@ -25,3 +26,15 @@ exports.signin = function(auth){
     .catch(reject);
   });
 };
+
+// exports.update = function(auth){
+//   debug('updatePromise');
+//   return new Promise((resolve, reject) => {
+//     User.findOne({username:auth.username})
+//     .then(user => user.compareHash(auth.password))
+//     .then(user => user.generateToken())
+//     .then(token => resolve(token))
+//     .catch(reject);
+//
+//   });
+// };
