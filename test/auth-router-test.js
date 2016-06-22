@@ -52,7 +52,7 @@ describe('testing auth-router module', function(){
       .catch(done);
     });
 
-    it('should return status 200 and a user', (done) => {
+    it('should return status 200', (done) => {
       request.post(`${baseUrl}/signup`)
       .send({username: 'test user', password: 'test password'})
       .then( res => {
@@ -112,7 +112,28 @@ describe('testing auth-router module', function(){
   }); // end GET test module
 
   describe('test bad GET /signin', function(){
-    // things
-  });
+    before( (done) => {
+      authController.signup({
+        username: 'test user',
+        password: 'test password'
+      })
+      .then( () => done())
+      .catch(done);
+    });
+    after( (done) => {
+      userController.removeAllUsers()
+      .then( () => done())
+      .catch(done);
+    });
+
+    it('should return status 401 for wrong password', (done) => {
+      request.get(`${baseUrl}/signin`)
+      .auth('test user', 'wrong password')
+      .end((err, res) => {
+        expect(res.status).to.equal(401);
+        done();
+      });
+    });
+  }); // end bad GET test module
 
 }); // end of auth-router test module
