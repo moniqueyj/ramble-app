@@ -2,7 +2,7 @@
 
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const jwt = require('jsonwebtoke');
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const httpErrors  = require('http-errors');
 const debug = require('debug')('ramble:user');
