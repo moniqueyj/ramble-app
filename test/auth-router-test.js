@@ -83,6 +83,36 @@ describe('testing auth-router module', function(){
         done();
       });
     });
+  }); // end bad POST test module
+
+  describe('test GET /signin', function(){
+    before( (done) => {
+      authController.signup({
+        username: 'test user',
+        password: 'test password'
+      })
+      .then( () => done())
+      .catch(done);
+    });
+    after( (done) => {
+      userController.removeAllUsers()
+      .then( () => done())
+      .catch(done);
+    });
+
+    it('should return status 200', (done) => {
+      request.get(`${baseUrl}/signin`)
+      .auth('test user', 'test password')
+      .then( res => {
+        expect(res.status).to.equal(200);
+        done();
+      })
+      .catch(done);
+    });
+  }); // end GET test module
+
+  describe('test bad GET /signin', function(){
+    // things
   });
 
 }); // end of auth-router test module
