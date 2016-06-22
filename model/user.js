@@ -17,7 +17,7 @@ userSchema.methods.generateHash = function(password){
   debug('generateHash');
   return new Promise((resolve, reject) =>{
     bcrypt.hash(password, 8, (err, hash) => {
-      if(err) return reject(err);
+      if(err) return reject(httpErrors(400, err.message));
       this.password = hash;
       resolve(this);
     });
