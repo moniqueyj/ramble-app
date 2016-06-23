@@ -27,14 +27,18 @@ exports.signin = function(auth){
   });
 };
 
-// exports.update = function(auth){
-//   debug('updatePromise');
-//   return new Promise((resolve, reject) => {
-//     User.findOne({username:auth.username})
-//     .then(user => user.compareHash(auth.password))
-//     .then(user => user.generateToken())
-//     .then(token => resolve(token))
-//     .catch(reject);
-//
-//   });
-// };
+exports.update = function(auth, reqBody){
+  debug('updateSignin');
+  var password = reqBody.password;
+  delete reqBody.password;
+  return new Promise((resolve, reject) => {
+    User.findOne({username:auth.username})
+    .then(user => user.compareHash(auth.password))
+    .then(user => user.generateHash(password))
+    .then(user =>user.save())
+    .then(user => user.generateToken())
+    .then(token => resolve(token))
+    .catch(reject);
+
+  });
+};
