@@ -73,5 +73,43 @@ describe('testing module entry-router', function(){
     });
   });  //end of POST module
 
+  describe('testing for Error on POST route', ()=>{
+    before((done)=>{
+      authController.signup({username:'testie', password:'12345'})
+      .then((user)=>{
+        this.tempUser = user;
+        done();
+      })
+    .catch(done);
+    });
 
+    after((done)=>{
+      entryController.removeAllEntries();
+      userController.removeAllUsers();
+      done();
+    });
+    it('should return status code 400',(done)=>{
+      request.post(`${baseUrl}/entry`)
+      .send({})
+      .then(res =>{
+        expect(res.status).to.equal(400);
+        done();
+      })
+      .catch(done);
+    });
+    it('should return status code 404',(done)=>{
+      request.post(`${baseUrl}/entry`)
+      .send({
+        userId: 12345,
+        title: 'testing',
+        keywords: 'test',
+        public: true
+      })
+      .then(res =>{
+        expect(res.status).to.equal(400);
+        done();
+      })
+      .catch(done);
+    });
+  });
 });//end of entry test module
