@@ -22,7 +22,7 @@ exports.fetchEntry = function(id){
   });
 };
 
-exports.fetchEntry = function(){
+exports.fetchAllEntry = function(){
   debug('fetchEntries');
   return new Promise((resolve, reject) => {
     Entry.find({})
