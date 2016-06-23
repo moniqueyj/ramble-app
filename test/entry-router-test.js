@@ -41,22 +41,24 @@ describe('testing module entry-router', function(){
     }
     done();
   });
-
-  describe('testing POST module entry-router', function(){
-    before((done)=>{
+  describe('testing entry-router module', function(){
+    beforeEach((done) => {
       authController.signup({username:'testie', password:'12345'})
       .then((user)=>{
         this.tempUser = user;
         done();
-      })
-    .catch(done);
+      });
     });
-
-    after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers();
-      done();
+    afterEach((done) =>{
+      Promise.all([
+        entryController.removeAllEntries(),
+        userController.removeAllUsers()
+      ])
+      .then( ()=> done())
+      .catch(done);
     });
+  });
+  describe('testing POST module entry-router', function(){
     it('should return status 200 code',(done)=>{
       request.post(`${baseUrl}/entry`)
       .send({
@@ -74,20 +76,6 @@ describe('testing module entry-router', function(){
   });  //end of POST module
 
   describe('testing for Error on POST route', ()=>{
-    before((done)=>{
-      authController.signup({username:'testie', password:'12345'})
-      .then((user)=>{
-        this.tempUser = user;
-        done();
-      })
-    .catch(done);
-    });
-
-    after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers();
-      done();
-    });
     it('should return status code 400',(done)=>{
       request.post(`${baseUrl}/entry`)
       .send({})
@@ -111,5 +99,46 @@ describe('testing module entry-router', function(){
       })
       .catch(done);
     });
-  });
+  });//end of error Post method
+  describe('testing GET module entry-router', function(){
+    before((done)=>{
+      request.post(`${baseUrl}/entry`)
+      .send({
+        userId: this.tempUser._id,
+        title: 'testing',
+        keywords: 'test',
+        public: true
+      })
+      .then(()=>{
+        done();
+      })
+      .catch(done);
+    });
+    it('should return status code 200',(done)=>{
+      request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
+      .then(res => {
+        expect(res.status).to.equal(200);
+        done();
+      })
+      .catch(done);
+    });
+    // describe('testing for Error on GET module', function(){
+    //   before((done)=>{
+    //     request.post(`${baseUrl}/entry`)
+    //     .send({})
+    //     .then(()=>{
+    //       done();
+    //     })
+    //     .catch(done);
+    //   });
+    //   it('should return status code 200',(done)=>{
+    //     request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
+    //     .then(res => {
+    //       expect(res.status).to.equal(200);
+    //       done();
+    //     })
+    //     .catch(done);
+    //   });
+    // });
+  });//end of GET module
 });//end of entry test module
