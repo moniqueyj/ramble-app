@@ -122,23 +122,23 @@ describe('testing module entry-router', function(){
       })
       .catch(done);
     });
-    // describe('testing for Error on GET module', function(){
-    //   before((done)=>{
-    //     request.post(`${baseUrl}/entry`)
-    //     .send({})
-    //     .then(()=>{
-    //       done();
-    //     })
-    //     .catch(done);
-    //   });
-    //   it('should return status code 200',(done)=>{
-    //     request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
-    //     .then(res => {
-    //       expect(res.status).to.equal(200);
-    //       done();
-    //     })
-    //     .catch(done);
-    //   });
-    // });
+    describe('testing for Error on GET module', function(){
+      before((done)=>{
+        request.post(`${baseUrl}/entry`)
+        .send({})
+        .then(()=>{
+          done();
+        })
+        .catch(done);
+      });
+      it('should return status code 400',(done)=>{
+        request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
+        .then(res => {
+          expect(res.status).to.equal(400);
+          done();
+        })
+        .catch(done);
+      });
+    });
   });//end of GET module
 });//end of entry test module
