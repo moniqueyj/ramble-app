@@ -22,6 +22,14 @@ exports.fetchEntry = function(id){
   });
 };
 
+exports.fetchEntry = function(){
+  debug('fetchEntries');
+  return new Promise((resolve, reject) => {
+    Entry.find({})
+    .then(resolve)
+    .catch(err => reject(httpErrors(404, err.message)));
+  });
+};
 exports.updateEntry = function(id, data){
   debug('updateEntry');
   return new Promise((resolve, reject) => {
