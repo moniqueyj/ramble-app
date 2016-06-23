@@ -22,6 +22,14 @@ exports.fetchEntry = function(id){
   });
 };
 
+exports.fetchAllEntry = function(){
+  debug('fetchEntries');
+  return new Promise((resolve, reject) => {
+    Entry.find({})
+    .then(resolve)
+    .catch(err => reject(httpErrors(404, err.message)));
+  });
+};
 exports.updateEntry = function(id, data){
   debug('updateEntry');
   return new Promise((resolve, reject) => {
@@ -34,16 +42,16 @@ exports.updateEntry = function(id, data){
       return reject(err);
     }
     Entry.findOne({_id: id})
-  .then(() => {
-    Entry.update(data)
     .then(() => {
-      Entry.findOne({_id: id})
-      .then(resolve)
-      .catch(reject);
+      Entry.update(data)
+      .then(() => {
+        Entry.findOne({_id: id})
+        .then(resolve)
+        .catch(reject);
+      })
+      .catch(err => reject(httpErrors(400, err.message)));
     })
-    .catch(err => reject(httpErrors(400, err.message)));
-  })
-  .catch(err => reject(httpErrors(404, err.message)));
+    .catch(err => reject(httpErrors(404, err.message)));
   });
 };
 
