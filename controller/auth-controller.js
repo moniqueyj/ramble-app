@@ -27,7 +27,7 @@ exports.signin = function(auth){
   });
 };
 
-exports.update = function(auth, reqBody){
+exports.updatePassword = function(auth, reqBody){
   debug('updateSignin');
   var password = reqBody.password;
   delete reqBody.password;
@@ -35,10 +35,20 @@ exports.update = function(auth, reqBody){
     User.findOne({username:auth.username})
     .then(user => user.compareHash(auth.password))
     .then(user => user.generateHash(password))
-    .then(user =>user.save())
+    .then(user => user.save())
     .then(user => user.generateToken())
     .then(token => resolve(token))
     .catch(reject);
+  });
+};
 
+exports.deleteUser = function(auth, res){
+  debug('deleteUser');
+  return new Promise((resolve, reject) => {
+    User.findOne({username:auth.username})
+    .then(user => user.compareHash(auth.password))
+    .then(user => user.remove(auth.username))
+    .then(() =>res.status())
+    .catch(reject);
   });
 };
