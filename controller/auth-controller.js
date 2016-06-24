@@ -32,7 +32,7 @@ exports.updatePassword = function(auth, reqBody){
   var password = reqBody.password;
   delete reqBody.password;
   return new Promise((resolve, reject) => {
-    User.findOne({username:auth.username})
+    User.findOne({ username:auth.username })
     .then(user => user.compareHash(auth.password))
     .then(user => user.generateHash(password))
     .then(user => user.save())
@@ -42,13 +42,15 @@ exports.updatePassword = function(auth, reqBody){
   });
 };
 
-exports.deleteUser = function(auth, res){
+exports.deleteUser = function(auth){
   debug('deleteUser');
   return new Promise((resolve, reject) => {
     User.findOne({username:auth.username})
     .then(user => user.compareHash(auth.password))
-    .then(user => user.remove(auth.username))
-    .then(() =>res.status())
+    .then((user) => {
+      user.remove();
+      resolve();
+    })
     .catch(reject);
   });
 };
