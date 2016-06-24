@@ -31,7 +31,7 @@ describe('testing module entry-router', function(){
     done();
   });
   after((done) =>{
-    debug('afer entry-router test module');
+    debug('after entry-router test module');
     if(server.isRunning){
       server.close(()=>{
         server.isRunning = false;
@@ -43,9 +43,10 @@ describe('testing module entry-router', function(){
   });
   describe('testing entry-router module', function(){
     beforeEach((done) => {
-      authController.signup({username:'testie', password:'12345'})
+      authController.signup({username:'test', password:'12345'})
       .then((user)=>{
         this.tempUser = user;
+        console.log(this.tempUser);
         done();
       });
     });
@@ -74,119 +75,119 @@ describe('testing module entry-router', function(){
       .catch(done);
     });
   });  //end of POST module
-
-  // describe('testing for Error on POST route', ()=>{
-  //   it('should return status code 400',(done)=>{
-  //     request.post(`${baseUrl}/entry`)
-  //     .send({})
-  //     .then(res =>{
-  //       expect(res.status).to.equal(400);
-  //       done();
-  //     })
-  //     .catch(done);
-  //   });
-  //   it('should return status code 404',(done)=>{
-  //     request.post(`${baseUrl}/entry`)
-  //     .send({
-  //       userId: 12345,
-  //       title: 'testing',
-  //       keywords: 'test',
-  //       public: true
-  //     })
-  //     .then(res =>{
-  //       expect(res.status).to.equal(404);
-  //       done();
-  //     })
-  //     .catch(done);
-  //   });
-  // });//end of error Post method
-  // describe('testing GET module entry-router', function(){
-  //   before((done)=>{
-  //     request.post(`${baseUrl}/entry`)
-  //     .send({
-  //       userId: this.tempUser._id,
-  //       title: 'testing',
-  //       keywords: 'test',
-  //       public: true
-  //     })
-  //     .then(()=>{
-  //       done();
-  //     })
-  //     .catch(done);
-  //   });
-  //   it('should return status code 200',(done)=>{
-  //     request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
-  //     .then(res => {
-  //       expect(res.status).to.equal(200);
-  //       done();
-  //     })
-  //     .catch(done);
-  //   });
-  //   describe('testing for Error on GET module', function(){
-  //     before((done)=>{
-  //       request.post(`${baseUrl}/entry`)
-  //       .send({
-  //         userId: this.tempUser._id,
-  //         title: 'testing',
-  //         keywords: 'test',
-  //         public: true
-  //       })
-  //       .then(()=>{
-  //         done();
-  //       })
-  //       .catch(done);
-  //     });
-  //     it('should return status code 404', (done)=>{
-  //       request.get(`${baseUrl}/entry/${this.tempEntry._id+1}`)
-  //       .then(res => {
-  //         expect(res.status).to.equal(404);
-  //         done();
-  //       })
-  //       .catch(done);
-  //     });
-  //   });
-  //   describe('testing PUT module on entery-router', function(){
-  //     before((done)=>{
-  //       entryController.fetchEntry(this.tempEntry.id)
-  //       .then(()=>{
-  //         done();
-  //       })
-  //       .catch(done);
-  //     });
-  //     it('should return status code 200',(done)=>{
-  //       request.put(`${baseUrl}/entry/${this.tempEntry.id}`)
-  //       .send({
-  //         public: false
-  //       })
-  //       .then(res => {
-  //         expect(res.status).to.equal(200);
-  //         expect(this.tempEntry.public).to.equal(false);
-  //         done();
-  //       })
-  //       .catch(done);
-  //     });
-  //   });
-  //
-  //   describe('testing for Error on PUT module', function(){
-  //     before((done)=>{
-  //       entryController.fetchEntry(this.tempEntry._id)
-  //       .then(()=>{
-  //         done();
-  //       })
-  //       .catch(done);
-  //     });
-  //     it('should return status code 400',(done)=>{
-  //       request.put(`${baseUrl}/entry/${this.tempEntry._id}`)
-  //       .send({
-  //         public: false
-  //       })
-  //       .then(res => {
-  //         expect(res.status).to.equal(200);
-  //         expect(this.tempEntry.public).to.equal(false);
-  //         done();
-  //       })
-  //       .catch(done);
-  //     });
-  //   });
-  // });
-});//end of entry test module
+});
+//   describe('testing for Error on POST route', ()=>{
+//     it('should return status code 400',(done)=>{
+//       request.post(`${baseUrl}/entry`)
+//       .send({})
+//       .then(res =>{
+//         expect(res.status).to.equal(400);
+//         done();
+//       })
+//       .catch(done);
+//     });
+//     it('should return status code 404',(done)=>{
+//       request.post(`${baseUrl}/entry`)
+//       .send({
+//         userId: 12345,
+//         title: 'testing',
+//         keywords: 'test',
+//         public: true
+//       })
+//       .then(res =>{
+//         expect(res.status).to.equal(404);
+//         done();
+//       })
+//       .catch(done);
+//     });
+//   });//end of error Post method
+//   describe('testing GET module entry-router', function(){
+//     before((done)=>{
+//       request.post(`${baseUrl}/entry`)
+//       .send({
+//         userId: this.tempUser._id,
+//         title: 'testing',
+//         keywords: 'test',
+//         public: true
+//       })
+//       .then(()=>{
+//         done();
+//       })
+//       .catch(done);
+//     });
+//     it('should return status code 200',(done)=>{
+//       request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
+//       .then(res => {
+//         expect(res.status).to.equal(200);
+//         done();
+//       })
+//       .catch(done);
+//     });
+//     describe('testing for Error on GET module', function(){
+//       before((done)=>{
+//         request.post(`${baseUrl}/entry`)
+//         .send({
+//           userId: this.tempUser._id,
+//           title: 'testing',
+//           keywords: 'test',
+//           public: true
+//         })
+//         .then(()=>{
+//           done();
+//         })
+//         .catch(done);
+//       });
+//       it('should return status code 404', (done)=>{
+//         request.get(`${baseUrl}/entry/${this.tempEntry._id+1}`)
+//         .then(res => {
+//           expect(res.status).to.equal(404);
+//           done();
+//         })
+//         .catch(done);
+//       });
+//     });
+//     describe('testing PUT module on entery-router', function(){
+//       before((done)=>{
+//         entryController.fetchEntry(this.tempEntry.id)
+//         .then(()=>{
+//           done();
+//         })
+//         .catch(done);
+//       });
+//       it('should return status code 200',(done)=>{
+//         request.put(`${baseUrl}/entry/${this.tempEntry.id}`)
+//         .send({
+//           public: false
+//         })
+//         .then(res => {
+//           expect(res.status).to.equal(200);
+//           expect(this.tempEntry.public).to.equal(false);
+//           done();
+//         })
+//         .catch(done);
+//       });
+//     });
+//
+//     describe('testing for Error on PUT module', function(){
+//       before((done)=>{
+//         entryController.fetchEntry(this.tempEntry._id)
+//         .then(()=>{
+//           done();
+//         })
+//         .catch(done);
+//       });
+//       it('should return status code 400',(done)=>{
+//         request.put(`${baseUrl}/entry/${this.tempEntry._id}`)
+//         .send({
+//           public: false
+//         })
+//         .then(res => {
+//           expect(res.status).to.equal(200);
+//           expect(this.tempEntry.public).to.equal(false);
+//           done();
+//         })
+//         .catch(done);
+//       });
+//     });
+//   });
+// });//end of entry test module
