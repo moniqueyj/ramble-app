@@ -23,13 +23,13 @@ authRouter.get('/signin', parseBasicAuth, function(req, res, next){
 });
 
 authRouter.put('/update/password', jsonParser, function(req, res, next){
-  authController.update(req.body)
+  authController.updatePassword(req.body)
   .then(token => res.send(token))
   .catch(next);
 });
 
-authRouter.delete('/delete/username', jsonParser, function(req, res, next){
-  authController.delete(req.username)
-  .then(() => res.status())
+authRouter.delete('/delete', function(req, res, next){
+  authController.deleteUser(req.auth)
+  .then(() => res.status(204).end())
   .catch(next);
 });
