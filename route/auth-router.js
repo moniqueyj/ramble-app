@@ -21,10 +21,15 @@ authRouter.get('/signin', parseBasicAuth, function(req, res, next){
   .then(token => res.send(token))
   .catch(next);
 });
-// 
-// authRouter.put('/update', jsonParser, function(req, res, next){
-//   console.log('req.username', req.username);
-//   authController.update(req.body)
-//   .then(token => res.send(token))
-//   .catch(next);
-// });
+
+authRouter.put('/update/password', jsonParser, function(req, res, next){
+  authController.update(req.body)
+  .then(token => res.send(token))
+  .catch(next);
+});
+
+authRouter.delete('/delete/username', jsonParser, function(req, res, next){
+  authController.delete(req.username)
+  .then(() => res.status())
+  .catch(next);
+});

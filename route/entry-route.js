@@ -5,7 +5,7 @@ const Router = require('express').Router;
 const jsonParser = require('body-parser').json();
 
 const parseBearerAuth = require('../lib/parse-bearer-auth');
-const entryController = require('../lib/entry-controller');
+const entryController = require('../controller/entry-controller');
 
 const entryRouter = module.exports = new Router();
 
