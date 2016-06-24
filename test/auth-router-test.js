@@ -147,4 +147,41 @@ describe('testing auth-router module', function(){
     });
   }); // end bad GET test module
 
+  describe('test PUT /update/password', function(){
+    before( (done) => {
+      debug('before PUT /update/password');
+      authController.signup({
+        username: 'test user',
+        password: 'test password'
+      })
+      .then( (token) => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+    after( (done) => {
+      debug('after PUT /update/password');
+      userController.removeAllUsers()
+      .then( () => done())
+      .catch(done);
+    });
+
+    it('should return an updated password', (done) => {
+      debug('testing password update');
+      request.put(`${baseUrl}/update/password`)
+      // .set('Authorization', `Bearer ${this.tempToken}`)
+      // .auth('test user', 'test password')
+      .send({username: 'test user', password: 'test password'})
+      .send({username: 'test user', password: 'updated password'})
+      .then((res) => {
+        expect(res.status).to.equal(200);
+        expect(res.username).to.equal('test user');
+        expect(res.password).to.equal('updated password');
+        done();
+      })
+      .catch(done);
+    });
+  }); // end PUT test module
+
 }); // end of auth-router test module
