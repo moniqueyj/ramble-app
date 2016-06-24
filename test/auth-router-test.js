@@ -137,13 +137,14 @@ describe('testing auth-router module', function(){
         done();
       });
     });
+
+    it('should return status 401 for no body', (done) => {
+      request.get(`${baseUrl}/signin`)
+      .end((err, res) => {
+        expect(res.status).to.equal(401);
+        done();
+      });
+    });
   }); // end bad GET test module
 
-  it('should return status 401 for no body', (done) => {
-    request.get(`${baseUrl}/signin`)
-    .end((err, res) => {
-      expect(res.status).to.equal(401);
-      done();
-    });
-  });
 }); // end of auth-router test module
