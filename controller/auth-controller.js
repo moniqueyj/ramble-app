@@ -47,7 +47,10 @@ exports.deleteUser = function(auth){
   return new Promise((resolve, reject) => {
     User.findOne({username:auth.username})
     .then(user => user.compareHash(auth.password))
-    .then(user => user.remove())
+    .then((user) => {
+      user.remove();
+      resolve();
+    })
     .catch(reject);
   });
 };
