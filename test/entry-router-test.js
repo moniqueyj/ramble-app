@@ -139,6 +139,8 @@ describe('testing module entry-router', function(){
         })
         .catch(done);
       });
+      // it('should return ')
     });
+
   });//end of GET module
 });//end of entry test module
