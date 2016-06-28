@@ -17,9 +17,9 @@ const userController = require('../controller/user-controller');
 
 request.use(superPromise);
 
-describe('testing auth-router module', function(){
+describe('testing auth-controller module', function(){
   before( (done) => {
-    debug('before module auth-router');
+    debug('before module auth-controller');
     if(!server.isRunning){
       server.listen(port, () => {
         server.isRunning = true;
@@ -32,7 +32,7 @@ describe('testing auth-router module', function(){
   });
 
   after( (done) => {
-    debug('after module auth-router');
+    debug('after module auth-controller');
     if(server.isRunning){
       server.close( () => {
         server.isRunning = false;
