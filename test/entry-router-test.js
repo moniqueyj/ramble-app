@@ -13,6 +13,7 @@ const mongoose = require('mongoose');
 const authController = require('../controller/auth-controller');
 const entryController = require('../controller/entry-controller');
 const userController = require('../controller/user-controller');
+const serverMaint = require('../lib/returnManageServer')(mongoose, server, port);
 
 const port = process.env.PORT || 3000;
 const baseUrl = `localhost:${port}/api`;
@@ -20,33 +21,39 @@ const server = require('../server');
 request.use(superPromise);
 
 describe('testing module entry-router', function(){
-  before((done) => {
-    debug('before entry-router test module');
-    if(!server.isRunning){
-      server.listen(port, ()=>{
-        server.isRunning = true;
-        done();
-      });
-      return;
-    }
-    done();
+  debug('before entry-router test module');
+  before((done)=>{
+    serverMaint.checkServer(done);
   });
-  after((done) =>{
-    debug('after entry-router test module');
-    if(server.isRunning){
-      server.close(()=>{
-        server.isRunning = false;
-        mongoose.connection.db.dropDatabase(() => {
-          debug('dropped test db');
-          return done();
-        });
-      });
-    }
-    mongoose.connection.db.dropDatabase(() => {
-      debug('dropped test db');
-      return done();
-    });
+  after((done)=>{
+    serverMaint.closeServer(done);
   });
+  // before((done) => {
+  //   if(!server.isRunning){
+  //     server.listen(port, ()=>{
+  //       server.isRunning = true;
+  //       done();
+  //     });
+  //     return;
+  //   }
+  //   done();
+  // });
+  // after((done) =>{
+  //   debug('after entry-router test module');
+  //   if(server.isRunning){
+  //     server.close(()=>{
+  //       server.isRunning = false;
+  //       mongoose.connection.db.dropDatabase(() => {
+  //         debug('dropped test db');
+  //         return done();
+  //       });
+  //     });
+  //   }
+  //   mongoose.connection.db.dropDatabase(() => {
+  //     debug('dropped test db');
+  //     return done();
+  //   });
+  // });
 
   describe('testing POST module entry-router', () =>{
     before((done)=>{
@@ -112,7 +119,6 @@ describe('testing module entry-router', function(){
         }
       });
     });
-  // });
     it('should return status code 404',(done)=>{
       request.post(`${baseUrl}/entry`)
       .send({
