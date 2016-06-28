@@ -8,6 +8,7 @@ const expect = require('chai').expect;
 const request = require('superagent-use');
 const superPromise = require('superagent-promise-plugin');
 const debug = require('debug')('ramble:entry-router-test');
+const mongoose = require('mongoose');
 
 const authController = require('../controller/auth-controller');
 const entryController = require('../controller/entry-controller');
@@ -35,39 +36,42 @@ describe('testing module entry-router', function(){
     if(server.isRunning){
       server.close(()=>{
         server.isRunning = false;
-        done();
+        mongoose.connection.db.dropDatabase(() => {
+          debug('dropped test db');
+          return done();
+        });
       });
-      return;
     }
-    done();
+    mongoose.connection.db.dropDatabase(() => {
+      debug('dropped test db');
+      return done();
+    });
   });
-  describe('testing entry-router module', function(){
-    beforeEach((done) => {
+
+  describe('testing POST module entry-router', () =>{
+    before((done)=>{
       authController.signup({username:'test', password:'12345'})
       .then((user)=>{
         this.tempUser = user;
         console.log(this.tempUser);
         done();
-      });
-    });
-    afterEach((done) =>{
-      Promise.all([
-        entryController.removeAllEntries(),
-        userController.removeAllUsers()
-      ])
-      .then( ()=> done())
+      })
       .catch(done);
     });
-  });
-  describe('testing POST module entry-router', () =>{
+    after((done)=>{
+      entryController.removeAllEntries();
+      userController.removeAllUsers()
+    .then(()=>done())
+    .catch(done);
+    });
     it('should return status 200 code',(done)=>{
       request.post(`${baseUrl}/entry`)
       .send({
         userId: this.tempUser._id,
         title: 'testing',
-        keywords: 'test',
-        public: true
+        keywords: 'test'
       })
+      .set('Authorization', `Token ${this.tempUser}`)
       .then(res =>{
         expect(res.status).to.equal(200);
         done();
@@ -75,40 +79,66 @@ describe('testing module entry-router', function(){
       .catch(done);
     });
   });  //end of POST module
+  //
+  describe('testing for Error on POST route', ()=>{
+    before((done)=>{
+      authController.signup({username:'test', password:'12345'})
+      .then((user)=>{
+        this.tempUser = user;
+        console.log(this.tempUser);
+        done();
+      })
+      .catch(done);
+    });
+    after((done)=>{
+      entryController.removeAllEntries();
+      userController.removeAllUsers()
+    .then(()=>done())
+    .catch(done);
+    });
+
+    it('should return status code 400',(done)=>{
+      request.post(`${baseUrl}/entry`)
+      .send({})
+      .set('Authorization', `Token ${this.tempUser}`)
+      .then(done)
+      .catch((err)=>{
+        try {
+          const res = err.response;
+          expect(res.status).to.equal(400);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+  // });
+    it('should return status code 404',(done)=>{
+      request.post(`${baseUrl}/entry`)
+      .send({
+        hello:'goodbye'
+      })
+      .set('Authorization', `Token ${this.tempUser}`)
+      .then(done)
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(404);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+  });//end of error Post method
 });
-//   describe('testing for Error on POST route', ()=>{
-//     it('should return status code 400',(done)=>{
-//       request.post(`${baseUrl}/entry`)
-//       .send({})
-//       .then(res =>{
-//         expect(res.status).to.equal(400);
-//         done();
-//       })
-//       .catch(done);
-//     });
-//     it('should return status code 404',(done)=>{
-//       request.post(`${baseUrl}/entry`)
-//       .send({
-//         userId: 12345,
-//         title: 'testing',
-//         keywords: 'test',
-//         public: true
-//       })
-//       .then(res =>{
-//         expect(res.status).to.equal(404);
-//         done();
-//       })
-//       .catch(done);
-//     });
-//   });//end of error Post method
 //   describe('testing GET module entry-router', function(){
 //     before((done)=>{
 //       request.post(`${baseUrl}/entry`)
 //       .send({
 //         userId: this.tempUser._id,
 //         title: 'testing',
-//         keywords: 'test',
-//         public: true
+//         keywords: 'test'
 //       })
 //       .then(()=>{
 //         done();
@@ -129,8 +159,7 @@ describe('testing module entry-router', function(){
 //         .send({
 //           userId: this.tempUser._id,
 //           title: 'testing',
-//           keywords: 'test',
-//           public: true
+//           keywords: 'test'
 //         })
 //         .then(()=>{
 //           done();
