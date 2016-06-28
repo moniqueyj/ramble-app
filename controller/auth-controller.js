@@ -27,14 +27,17 @@ exports.signin = function(auth){
   });
 };
 
-exports.updatePassword = function(auth, reqBody){
+
+// post with a token
+// and body should contain
+//   oldPassword
+//   newPassword
+exports.updatePassword = function(userId, reqBody){
   debug('updateSignin');
-  var password = reqBody.password;
-  delete reqBody.password;
   return new Promise((resolve, reject) => {
-    User.findOne({ username:auth.username })
-    .then(user => user.compareHash(auth.password))
-    .then(user => user.generateHash(password))
+    User.findOne({ _id: userId })
+    .then(user => user.compareHash(reqBody.oldPassword))
+    .then(user => user.generateHash(reqBody.newPassword))
     .then(user => user.save())
     .then(user => user.generateToken())
     .then(token => resolve(token))
@@ -42,11 +45,11 @@ exports.updatePassword = function(auth, reqBody){
   });
 };
 
-exports.deleteUser = function(auth){
+exports.deleteUser = function(userId, reqBody){
   debug('deleteUser');
   return new Promise((resolve, reject) => {
-    User.findOne({username:auth.username})
-    .then(user => user.compareHash(auth.password))
+    User.findOne({_id: userId})
+    .then(user => user.compareHash(reqBody.password))
     .then((user) => {
       user.remove();
       resolve();
