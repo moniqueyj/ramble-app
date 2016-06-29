@@ -76,13 +76,67 @@ describe('testing auth-router module', function(){
       });
     });
 
-    it('should return status 401 unauthorized', (done) => {
+    it('should return status 401 wrong user right password', (done) => {
       request.get(`${baseUrl}/signin`)
-      .auth('testwrong', 'test password')
+      .auth('wrong user', 'test password')
+      .end((err, res) => {
+        expect(res.status).to.equal(401);
+        done();
+      });
+    });
+
+    it('should return status 401 right user wrong password', (done) => {
+      request.get(`${baseUrl}/signin`)
+      .auth('test user', 'wrong password')
       .end((err, res) => {
         expect(res.status).to.equal(401);
         done();
       });
     });
   }); // end GET test module
+
+  describe('PUT test module', function(){
+    before(done => {
+      authController.signup({username: 'test user1', password: 'test password'})
+      .then((token) => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+    after(done => {
+      userController.removeAllUsers();
+      done();
+    });
+
+    it('should return 200 and updated password', (done) => {
+      request.put(`${baseUrl}/update/password`)
+      .set('Authorization', `Bearer ${this.tempToken}`)
+      .send({
+        oldPassword: 'test password',
+        newPassword: 'updated password'
+      })
+      .end((err, res) => {
+        res.newToken = res.text;
+        expect(res.status).to.equal(200);
+        expect(res.newToken).to.not.equal(this.tempToken);
+        done();
+      });
+
+      it('should return status 401 unauthorized password change', (done) => {
+        request.put(`${baseUrl}/update/password`)
+        .set('Authorization', `Bearer ${1234}`)
+        .send({
+          oldPassword: 'test password',
+          newPassword: 'updated password'
+        })
+        .end((err, res) => {
+          res.newToken = res.text;
+          expect(res.status).to.equal(401);
+          // expect(res.newToken).to.not.equal(this.tempToken);
+          done();
+        });
+      });
+    });
+  }); // end PUT test module
 }); // end auth-routre testing module
