@@ -13,11 +13,11 @@ const mongoose = require('mongoose');
 const authController = require('../controller/auth-controller');
 const entryController = require('../controller/entry-controller');
 const userController = require('../controller/user-controller');
-const serverMaint = require('../lib/returnManageServer')(mongoose, server, port);
 
 const port = process.env.PORT || 3000;
 const baseUrl = `localhost:${port}/api`;
 const server = require('../server');
+const serverMaint = require('./lib/returnManageServer')(mongoose, server, port);
 request.use(superPromise);
 
 describe('testing module entry-router', function(){
@@ -28,32 +28,6 @@ describe('testing module entry-router', function(){
   after((done)=>{
     serverMaint.closeServer(done);
   });
-  // before((done) => {
-  //   if(!server.isRunning){
-  //     server.listen(port, ()=>{
-  //       server.isRunning = true;
-  //       done();
-  //     });
-  //     return;
-  //   }
-  //   done();
-  // });
-  // after((done) =>{
-  //   debug('after entry-router test module');
-  //   if(server.isRunning){
-  //     server.close(()=>{
-  //       server.isRunning = false;
-  //       mongoose.connection.db.dropDatabase(() => {
-  //         debug('dropped test db');
-  //         return done();
-  //       });
-  //     });
-  //   }
-  //   mongoose.connection.db.dropDatabase(() => {
-  //     debug('dropped test db');
-  //     return done();
-  //   });
-  // });
 
   describe('testing POST module entry-router', () =>{
     before((done)=>{
@@ -104,7 +78,7 @@ describe('testing module entry-router', function(){
     .catch(done);
     });
 
-    it('should return status code 400',(done)=>{
+    it('should return status code 400 with no body',(done)=>{
       request.post(`${baseUrl}/entry`)
       .send({})
       .set('Authorization', `Token ${this.tempUser}`)
@@ -119,13 +93,203 @@ describe('testing module entry-router', function(){
         }
       });
     });
-    it('should return status code 404',(done)=>{
+    it('should return status code 400 with no contents',(done)=>{
       request.post(`${baseUrl}/entry`)
       .send({
         hello:'goodbye'
       })
       .set('Authorization', `Token ${this.tempUser}`)
       .then(done)
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(400);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+  });
+  describe('testing GET module entry-router', function(){
+    before((done)=>{
+      authController.signup({username:'test', password:'12345'})
+      .then((user)=>{
+        this.tempUser = user;
+        console.log('TOKEN IS:', this.tempUser);
+        done();
+      })
+      .catch(done);
+    });
+    after((done)=>{
+      entryController.removeAllEntries();
+      userController.removeAllUsers()
+    .then(()=>done())
+    .catch(done);
+    });
+    before((done)=>{
+      request.post(`${baseUrl}/entry`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        userId: this.tempUser._id,
+        title: 'testing',
+        keywords: 'test'
+      })
+      .then((res)=>{
+        this.tempEntry = res.body;
+        done();
+      })
+      .catch(done);
+    });
+    it('should return status code 200',(done)=>{
+      request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(res => {
+        expect(res.status).to.equal(200);
+        done();
+      })
+      .catch(done);
+    });
+  });
+
+  describe('testing for Error on GET module', function(){
+    before((done)=>{
+      authController.signup({username:'test', password:'12345'})
+      .then((user)=>{
+        this.tempUser = user;
+        console.log('TOKEN IS:', this.tempUser);
+        done();
+      })
+      .catch(done);
+    });
+    after((done)=>{
+      entryController.removeAllEntries();
+      userController.removeAllUsers()
+    .then(()=>done())
+    .catch(done);
+    });
+    before((done)=>{
+      request.post(`${baseUrl}/entry`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        userId: this.tempUser._id,
+        title: 'testing',
+        keywords: 'test'
+      })
+      .then((res)=>{
+        this.tempEntry = res.body;
+        done();
+      })
+      .catch(done);
+    });
+    it('should return status code 404', (done)=>{
+      request.get(`${baseUrl}/entry/${this.tempEntry._id+1}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(res => {
+        expect(res.status).to.equal(404);
+        done();
+      })
+      .catch(() => {
+        done();
+      });
+    });
+  });
+  describe('testing PUT module on entery-router', function(){
+    before((done)=>{
+      authController.signup({username:'test', password:'12345'})
+      .then((user)=>{
+        this.tempUser = user;
+        done();
+      })
+      .catch(done);
+    });
+    after((done)=>{
+      entryController.removeAllEntries();
+      userController.removeAllUsers()
+    .then(()=>done())
+    .catch(done);
+    });
+    before((done)=>{
+      request.post(`${baseUrl}/entry`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        userId: this.tempUser._id,
+        title: 'testing',
+        keywords: 'test'
+      })
+      .then((res)=>{
+        this.tempEntry = res.body;
+        done();
+      })
+      .catch(done);
+    });
+    it('should return status code 200',(done)=>{
+      request.put(`${baseUrl}/entry/${this.tempEntry._id}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        title: 'new testing protocol',
+        keywords: 'PUT test'
+      })
+      .then(res => {
+        expect(res.status).to.equal(200);
+        done();
+      })
+      .catch(done);
+    });
+  });
+  describe('testing for Error on PUT module', function(){
+    before((done)=>{
+      authController.signup({username:'test', password:'12345'})
+      .then((user)=>{
+        this.tempUser = user;
+        done();
+      })
+      .catch(done);
+    });
+    after((done)=>{
+      entryController.removeAllEntries();
+      userController.removeAllUsers()
+    .then(()=>done())
+    .catch(done);
+    });
+    before((done)=>{
+      request.post(`${baseUrl}/entry`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        userId: this.tempUser._id,
+        title: 'testing',
+        keywords: 'test'
+      })
+      .then((res)=>{
+        this.tempEntry = res.body;
+        done();
+      })
+      .catch(done);
+    });
+    it('should return status code 400 with no body',(done)=>{
+      request.put(`${baseUrl}/entry/${this.tempEntry._id}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({})
+      .then(() => done())
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(400);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+    it('should return status code 404 with no id', (done)=>{
+      request.put(`${baseUrl}/entry/${this.tempEntry._id+1}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        userId: this.tempUser._id,
+        title: 'testing',
+        keywords: 'test'
+      })
+      .then(() => done())
       .catch((err) =>{
         try{
           const res = err.response;
@@ -136,93 +300,102 @@ describe('testing module entry-router', function(){
         }
       });
     });
-  });//end of error Post method
-});
-//   describe('testing GET module entry-router', function(){
-//     before((done)=>{
-//       request.post(`${baseUrl}/entry`)
-//       .send({
-//         userId: this.tempUser._id,
-//         title: 'testing',
-//         keywords: 'test'
-//       })
-//       .then(()=>{
-//         done();
-//       })
-//       .catch(done);
-//     });
-//     it('should return status code 200',(done)=>{
-//       request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
-//       .then(res => {
-//         expect(res.status).to.equal(200);
-//         done();
-//       })
-//       .catch(done);
-//     });
-//     describe('testing for Error on GET module', function(){
-//       before((done)=>{
-//         request.post(`${baseUrl}/entry`)
-//         .send({
-//           userId: this.tempUser._id,
-//           title: 'testing',
-//           keywords: 'test'
-//         })
-//         .then(()=>{
-//           done();
-//         })
-//         .catch(done);
-//       });
-//       it('should return status code 404', (done)=>{
-//         request.get(`${baseUrl}/entry/${this.tempEntry._id+1}`)
-//         .then(res => {
-//           expect(res.status).to.equal(404);
-//           done();
-//         })
-//         .catch(done);
-//       });
-//     });
-//     describe('testing PUT module on entery-router', function(){
-//       before((done)=>{
-//         entryController.fetchEntry(this.tempEntry.id)
-//         .then(()=>{
-//           done();
-//         })
-//         .catch(done);
-//       });
-//       it('should return status code 200',(done)=>{
-//         request.put(`${baseUrl}/entry/${this.tempEntry.id}`)
-//         .send({
-//           public: false
-//         })
-//         .then(res => {
-//           expect(res.status).to.equal(200);
-//           expect(this.tempEntry.public).to.equal(false);
-//           done();
-//         })
-//         .catch(done);
-//       });
-//     });
-//
-//     describe('testing for Error on PUT module', function(){
-//       before((done)=>{
-//         entryController.fetchEntry(this.tempEntry._id)
-//         .then(()=>{
-//           done();
-//         })
-//         .catch(done);
-//       });
-//       it('should return status code 400',(done)=>{
-//         request.put(`${baseUrl}/entry/${this.tempEntry._id}`)
-//         .send({
-//           public: false
-//         })
-//         .then(res => {
-//           expect(res.status).to.equal(200);
-//           expect(this.tempEntry.public).to.equal(false);
-//           done();
-//         })
-//         .catch(done);
-//       });
-//     });
-//   });
-// });//end of entry test module
+  });
+  describe('testing on DELETE module', function(){
+    before((done)=>{
+      authController.signup({username:'test', password:'12345'})
+      .then((user)=>{
+        this.tempUser = user;
+        done();
+      })
+      .catch(done);
+    });
+    after((done)=>{
+      entryController.removeAllEntries();
+      userController.removeAllUsers()
+    .then(()=>done())
+    .catch(done);
+    });
+    before((done)=>{
+      request.post(`${baseUrl}/entry`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        userId: this.tempUser._id,
+        title: 'testing',
+        keywords: 'test'
+      })
+      .then((res)=>{
+        this.tempEntry = res.body;
+        done();
+      })
+      .catch(done);
+    });
+    it('should return status code 204',(done)=>{
+      request.del(`${baseUrl}/entry/${this.tempEntry._id}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(res => {
+        expect(res.status).to.equal(204);
+        done();
+      })
+      .catch(done);
+    });
+  });
+  describe('testing for Error on DELETE module', function(){
+    before((done)=>{
+      authController.signup({username:'test', password:'12345'})
+      .then((user)=>{
+        this.tempUser = user;
+        done();
+      })
+      .catch(done);
+    });
+    after((done)=>{
+      entryController.removeAllEntries();
+      userController.removeAllUsers()
+    .then(()=>done())
+    .catch(done);
+    });
+    before((done)=>{
+      request.post(`${baseUrl}/entry`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        userId: this.tempUser._id,
+        title: 'testing',
+        keywords: 'test'
+      })
+      .then((res)=>{
+        this.tempEntry = res.body;
+        done();
+      })
+      .catch(done);
+    });
+    it('should return status code 404 with wrong entryId',(done)=>{
+      request.del(`${baseUrl}/entry/${this.tempEntry._id+1}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(() => done())
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(404);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+    it('should return status code 401 with wroung userId', (done)=>{
+      request.del(`${baseUrl}/entry/${this.tempEntry._id}`)
+      .set('Authorization', `Bearer ${this.tempUser+1}`)
+      .then(() => done())
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(401);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+  });
+});//end of entry test module
