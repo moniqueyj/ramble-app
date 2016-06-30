@@ -38,9 +38,9 @@ entryRouter.put('/entry/:id', parseBearerAuth, jsonParser, function(req, res, ne
   .catch(next);
 });
 
-entryRouter.delete('/entry/:id', parseBearerAuth, function(req, res, next){
+entryRouter.delete('/entry/:id', parseBearerAuth,jsonParser, function(req, res, next){
   debug('DELETE /entry');
   entryController.removeEntry(req.params.id)
-  .then(() => res.status())
+  .then(() => res.status(204).end())
   .catch(next);
 });
