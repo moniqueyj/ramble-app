@@ -9,6 +9,7 @@ const httpErrors = require('http-errors');
 const handleError = require('./lib/handle-error');
 const authRouter = require('./route/auth-router');
 const entryRouter = require('./route/entry-route');
+const challengeRouter = require('./route/challenge-router');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -20,6 +21,7 @@ app.use(morgan('dev'));
 
 app.use('/api', authRouter);
 app.use('/api', entryRouter);
+app.use('/api', challengeRouter);
 
 app.all('*', function(req, res, next){
   debug('404 * route');
