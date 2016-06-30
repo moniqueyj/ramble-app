@@ -4,12 +4,10 @@ process.env.APP_SECRET = 'something123';
 process.env.MONGODB_URI = 'mongodb://localhost/rambletest';
 
 const mongoose = require('mongoose');
-const debug = require('debug')('ramble:auth-router-test');
 const expect = require('chai').expect;
 const request = require('superagent-use');
 const superPromise = require('superagent-promise-plugin');
 
-const authRouter = require('../route/auth-router');
 const authController = require('../controller/auth-controller');
 const userController = require('../controller/user-controller');
 
@@ -133,10 +131,50 @@ describe('testing auth-router module', function(){
         .end((err, res) => {
           res.newToken = res.text;
           expect(res.status).to.equal(401);
-          // expect(res.newToken).to.not.equal(this.tempToken);
           done();
         });
       });
     });
   }); // end PUT test module
-}); // end auth-routre testing module
+
+  describe('DELETE test module', function(){
+    before(done => {
+      authController.signup({username: 'test user2', password: 'test password'})
+      .then((token) => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+    });
+
+    it('should return status 204 successfully deleted user', (done) => {
+      request.del(`${baseUrl}/delete`)
+      .set('Authorization', `Bearer ${this.tempToken}`)
+      .send({confirmPassword: 'test password'})
+      .end((err, res) => {
+        expect(res.status).to.equal(204);
+        done();
+      });
+    });
+  }); // end DELETE test module
+
+  it('should return 401 bad token', (done) => {
+    request.del(`${baseUrl}/delete`)
+    .set('Authorization', `Bearer ${1234}`)
+    .send({confirmPassword: 'test password'})
+    .end((err, res) => {
+      expect(res.status).to.equal(401);
+      done();
+    });
+  });
+
+  it('should return 401 wrong confirmPassword', (done) => {
+    request.del(`${baseUrl}/delete`)
+    .set('Authorization', `Bearer${this.tempToken}`)
+    .send({confirmPassword: 'wrong password'})
+    .end((err, res) => {
+      expect(res.status).to.equal(401);
+      done();
+    });
+  });
+}); // end auth-router testing module

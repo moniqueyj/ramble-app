@@ -56,10 +56,13 @@ exports.deleteUser = function(userId, reqBody){
   debug('deleteUser');
   return new Promise((resolve, reject) => {
     User.findOne({_id: userId})
-    .then(user => user.compareHash(reqBody.password))
-    .then((user) => {
-      user.remove();
-      resolve();
+    .then(user => {
+      user.compareHash(reqBody.confirmPassword)
+      .then((user) => {
+        user.remove();
+        resolve();
+      })
+      .catch(reject);
     })
     .catch(reject);
   });
