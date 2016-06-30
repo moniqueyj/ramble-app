@@ -37,5 +37,3 @@ function pre(request, authController,entryController, userController, port, base
     }
   };
 }
-
-const pre = require('./lib/preworkforItBlcok')(request, authController,entryController, userController, port, baseUrl);
