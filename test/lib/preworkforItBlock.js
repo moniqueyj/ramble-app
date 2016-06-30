@@ -25,7 +25,6 @@ function pre(request, authController,entryController, userController, port, base
       request.post(`${baseUrl}/entry`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .send({
-        userId: this.tempUser._id,
         title: 'testing',
         keywords: 'test'
       })
