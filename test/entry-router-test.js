@@ -193,6 +193,17 @@ describe('testing module entry-router', function(){
         done();
       });
     });
+    it('should return status code 400 with wrong user Id', (done)=>{
+      request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
+      .set('Authorization', `Bearer ${this.tempUser+1}`)
+      .then(res => {
+        expect(res.status).to.equal(404);
+        done();
+      })
+      .catch(() => {
+        done();
+      });
+    });
   });
   describe('testing PUT module on entery-router', function(){
     before((done)=>{
@@ -300,6 +311,25 @@ describe('testing module entry-router', function(){
         }
       });
     });
+    it('should return status code 404 with wrong user id', (done)=>{
+      request.put(`${baseUrl}/entry/${this.tempEntry._id}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        userId: this.tempUser._id+1,
+        title: 'testing',
+        keywords: 'test'
+      })
+      .then(() => done())
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(404);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
   });
   describe('testing on DELETE module', function(){
     before((done)=>{
@@ -383,7 +413,7 @@ describe('testing module entry-router', function(){
         }
       });
     });
-    it('should return status code 401 with wroung userId', (done)=>{
+    it('should return status code 401 with wrong password', (done)=>{
       request.del(`${baseUrl}/entry/${this.tempEntry._id}`)
       .set('Authorization', `Bearer ${this.tempUser+1}`)
       .then(() => done())
