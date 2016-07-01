@@ -147,7 +147,48 @@ describe('testing module entry-router', function(){
       });
     });
   });
-  describe('testing PUT module on entery-router', function(){
+  describe('testing for GET all Entry module', function(){
+    before((done)=>{
+      pre.beforeBlock.call(this, done);
+    });
+    after((done)=>{
+      pre.afterBlock(done);
+    });
+    before((done)=>{
+      pre.postBeforeBlock.call(this, done);
+    });
+    it('should return status code 200', (done)=>{
+      request.get(`${baseUrl}/entry/`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(res => {
+        expect(res.status).to.equal(200);
+        done();
+      })
+      .catch(() => {
+        done();
+      });
+    });
+  });
+  describe('testing for GET all Entry module', function(){
+    before((done)=>{
+      pre.beforeBlock.call(this, done);
+    });
+    after((done)=>{
+      pre.afterBlock(done);
+    });
+    it('should return status code 404', (done)=>{
+      request.get(`${baseUrl}/entry/`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(res => {
+        expect(res.status).to.equal(404);
+        done();
+      })
+      .catch(() => {
+        done();
+      });
+    });
+  });
+  describe('testing PUT module on entry-router', function(){
     before((done)=>{
       pre.beforeBlock.call(this, done);
     });
