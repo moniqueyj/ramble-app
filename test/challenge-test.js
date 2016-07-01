@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 const server = require('../server');
 const port = process.env.PORT || 3000;
 const baseUrl = `http://localhost:${port}/api`;
-const User = require('../model/user');
+// const User = require('../model/user');
 
 const authController = require('../controller/auth-controller');
 const userController = require('../controller/user-controller');
@@ -191,7 +191,108 @@ describe('testing challenge router', function(){
       .catch(done);
     });
   });
-
-
-
+  describe('testing for Error on PUT', function(){
+    before((done) => {
+      preamble.challengePreBlock.call(this, done);
+    });
+    after((done)=>{
+      preamble.ChallengePostBlock(done);
+    });
+    before((done) => {
+      preamble.postChallengeBeforeBlock.call(this, done);
+    });
+    it('should return status code 400 with no body', (done)=>{
+      request.put(`${baseUrl}/entry/${this.tempChallenge._id}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({})
+      .then(() => done())
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(400);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+    it('should return status code 404 with wrong use id', (done)=>{
+      request.put(`${baseUrl}/entry/${this.tempChallenge._id}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .send({
+        userId: this.tempUser._id+1,
+        title: 'testing',
+        keywords: 'test'
+      })
+      .then(() => done())
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(404);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+  });
+  describe('testing on DELETE module', function(){
+    before((done) => {
+      preamble.challengePreBlock.call(this, done);
+    });
+    after((done)=>{
+      preamble.ChallengePostBlock(done);
+    });
+    before((done) => {
+      preamble.postChallengeBeforeBlock.call(this, done);
+    });
+    it('should return status code 204', (done) =>{
+      request.del(`${baseUrl}/entry/${this.tempChallenge._id}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(res => {
+        expect(res.status).to.equal(204);
+        done();
+      })
+      .catch(done);
+    });
+  });
+  describe('testing for Error on Delete', function(){
+    before((done) => {
+      preamble.challengePreBlock.call(this, done);
+    });
+    after((done)=>{
+      preamble.ChallengePostBlock(done);
+    });
+    before((done) => {
+      preamble.postChallengeBeforeBlock.call(this, done);
+    });
+    it('should return status code 404 with wrong entryId',(done)=>{
+      request.del(`${baseUrl}/entry/${this.tempChallenge._id+1}`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(() => done())
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(404);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+    it('should return status code 401 with wrong password', (done)=>{
+      request.del(`${baseUrl}/entry/${this.tempChallenge._id}`)
+      .set('Authorization', `Bearer ${this.tempUser+1}`)
+      .then(() => done())
+      .catch((err) =>{
+        try{
+          const res = err.response;
+          expect(res.status).to.equal(401);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      });
+    });
+  });
 });//outer
