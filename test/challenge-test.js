@@ -12,7 +12,6 @@ const mongoose = require('mongoose');
 const server = require('../server');
 const port = process.env.PORT || 3000;
 const baseUrl = `http://localhost:${port}/api`;
-// const User = require('../model/user');
 
 const authController = require('../controller/auth-controller');
 const userController = require('../controller/user-controller');
