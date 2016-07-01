@@ -11,6 +11,7 @@ const challengeRouter = module.exports = new Router();
 
 challengeRouter.post('/challenges', parseBearerAuth, jsonParser, function(req, res, next){
   debug('POST /challenge');
+  req.body.userId = req.userId;
   challengeController.createChallenge(req.body)
   .then(challenge => res.json(challenge))
   .catch(next);

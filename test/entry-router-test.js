@@ -40,7 +40,6 @@ describe('testing module entry-router', function(){
     it('should return status 200 code',(done)=>{
       request.post(`${baseUrl}/entry`)
       .send({
-        userId: this.tempUser._id,
         title: 'testing',
         keywords: 'test'
       })

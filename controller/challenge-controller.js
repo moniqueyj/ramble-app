@@ -8,7 +8,9 @@ exports.createChallenge = function(challengeData) {
   debug('createChallenge');
   return new Promise((resolve, reject) => {
     new Challenge(challengeData).save()
-    .then(challenge => resolve(challenge))
+    .then((challenge) => {
+      resolve(challenge);
+    })
     .catch(err => reject(httpErrors(400, err.message)));
   });
 };
@@ -67,4 +69,8 @@ exports.removeChallenge = function(id) {
     })
     .catch(err => reject(httpErrors(404, err.message)));
   });
+};
+
+exports.removeAllChallenges = function(){
+  return Challenge.remove({});
 };
