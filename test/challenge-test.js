@@ -167,6 +167,43 @@ describe('testing challenge router', function(){
       });
     });
   });
+  describe('testing GET all module challenge-router', function(){
+    before((done) => {
+      preamble.challengePreBlock.call(this, done);
+    });
+    after((done)=>{
+      preamble.ChallengePostBlock(done);
+    });
+    before((done) => {
+      preamble.postChallengeBeforeBlock.call(this, done);
+    });
+    it('should return status code 200', (done)=>{
+      request.get(`${baseUrl}/challenges`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(res => {
+        expect(res.status).to.equal(200);
+        done();
+      })
+      .catch(done);
+    });
+  });
+  describe('testing GET all challenges Error', function(){
+    before((done) => {
+      preamble.challengePreBlock.call(this, done);
+    });
+    after((done)=>{
+      preamble.ChallengePostBlock(done);
+    });
+    it('should return a code 404', (done)=>{
+      request.get(`${baseUrl}/challenges`)
+      .set('Authorization', `Bearer ${this.tempUser}`)
+      .then(res => {
+        expect(res.status).to.equal(200);
+        done();
+      })
+      .catch(done);
+    });
+  });
   describe('testing PUT module on challenge-router', function(){
     before((done) => {
       preamble.challengePreBlock.call(this, done);
