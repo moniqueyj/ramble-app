@@ -1,19 +1,19 @@
 # Ramble - write what you like
 
-Members:\n
-- Anthony Casson\n
-- Ron Oh\n
-- Courtney Lane\n
-- Yunjoo Kim\n
+Members:
+- Anthony Casson
+- Ron Oh
+- Courtney Lane
+- Yunjoo Kim
 
 ##Project Overview
 
-The goal of the project was to create a well-tested, multi-resource REST API with a team\n
+The goal of the project was to create a well-tested, multi-resource REST API with a team
 of developers and deploy using Heroku.
 
 ##The App
 
-Ramble, inspired by personal diaries and journals, is a content management system (CMS)\n
+Ramble, inspired by personal diaries and journals, is a content management system (CMS)
 designed for writing privately.
 
 ##Current Endpoints
