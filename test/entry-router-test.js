@@ -18,6 +18,7 @@ const port = process.env.PORT || 3000;
 const baseUrl = `localhost:${port}/api`;
 const server = require('../server');
 const serverMaint = require('./lib/returnManageServer')(mongoose, server, port);
+const pre = require('./lib/preworkforItBlock')(request, authController,entryController, userController, port, baseUrl);
 request.use(superPromise);
 
 describe('testing module entry-router', function(){
@@ -31,24 +32,14 @@ describe('testing module entry-router', function(){
 
   describe('testing POST module entry-router', () =>{
     before((done)=>{
-      authController.signup({username:'test', password:'12345'})
-      .then((user)=>{
-        this.tempUser = user;
-        console.log(this.tempUser);
-        done();
-      })
-      .catch(done);
+      pre.beforeBlock.call(this, done);
     });
     after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers()
-    .then(()=>done())
-    .catch(done);
+      pre.afterBlock(done);
     });
     it('should return status 200 code',(done)=>{
       request.post(`${baseUrl}/entry`)
       .send({
-        userId: this.tempUser._id,
         title: 'testing',
         keywords: 'test'
       })
@@ -63,19 +54,10 @@ describe('testing module entry-router', function(){
   //
   describe('testing for Error on POST route', ()=>{
     before((done)=>{
-      authController.signup({username:'test', password:'12345'})
-      .then((user)=>{
-        this.tempUser = user;
-        console.log(this.tempUser);
-        done();
-      })
-      .catch(done);
+      pre.beforeBlock.call(this, done);
     });
     after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers()
-    .then(()=>done())
-    .catch(done);
+      pre.afterBlock(done);
     });
 
     it('should return status code 400 with no body',(done)=>{
@@ -113,33 +95,13 @@ describe('testing module entry-router', function(){
   });
   describe('testing GET module entry-router', function(){
     before((done)=>{
-      authController.signup({username:'test', password:'12345'})
-      .then((user)=>{
-        this.tempUser = user;
-        console.log('TOKEN IS:', this.tempUser);
-        done();
-      })
-      .catch(done);
+      pre.beforeBlock.call(this, done);
     });
     after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers()
-    .then(()=>done())
-    .catch(done);
+      pre.afterBlock(done);
     });
     before((done)=>{
-      request.post(`${baseUrl}/entry`)
-      .set('Authorization', `Bearer ${this.tempUser}`)
-      .send({
-        userId: this.tempUser._id,
-        title: 'testing',
-        keywords: 'test'
-      })
-      .then((res)=>{
-        this.tempEntry = res.body;
-        done();
-      })
-      .catch(done);
+      pre.postBeforeBlock.call(this, done);
     });
     it('should return status code 200',(done)=>{
       request.get(`${baseUrl}/entry/${this.tempEntry._id}`)
@@ -154,33 +116,13 @@ describe('testing module entry-router', function(){
 
   describe('testing for Error on GET module', function(){
     before((done)=>{
-      authController.signup({username:'test', password:'12345'})
-      .then((user)=>{
-        this.tempUser = user;
-        console.log('TOKEN IS:', this.tempUser);
-        done();
-      })
-      .catch(done);
+      pre.beforeBlock.call(this, done);
     });
     after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers()
-    .then(()=>done())
-    .catch(done);
+      pre.afterBlock(done);
     });
     before((done)=>{
-      request.post(`${baseUrl}/entry`)
-      .set('Authorization', `Bearer ${this.tempUser}`)
-      .send({
-        userId: this.tempUser._id,
-        title: 'testing',
-        keywords: 'test'
-      })
-      .then((res)=>{
-        this.tempEntry = res.body;
-        done();
-      })
-      .catch(done);
+      pre.postBeforeBlock.call(this, done);
     });
     it('should return status code 404', (done)=>{
       request.get(`${baseUrl}/entry/${this.tempEntry._id+1}`)
@@ -207,32 +149,13 @@ describe('testing module entry-router', function(){
   });
   describe('testing PUT module on entery-router', function(){
     before((done)=>{
-      authController.signup({username:'test', password:'12345'})
-      .then((user)=>{
-        this.tempUser = user;
-        done();
-      })
-      .catch(done);
+      pre.beforeBlock.call(this, done);
     });
     after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers()
-    .then(()=>done())
-    .catch(done);
+      pre.afterBlock(done);
     });
     before((done)=>{
-      request.post(`${baseUrl}/entry`)
-      .set('Authorization', `Bearer ${this.tempUser}`)
-      .send({
-        userId: this.tempUser._id,
-        title: 'testing',
-        keywords: 'test'
-      })
-      .then((res)=>{
-        this.tempEntry = res.body;
-        done();
-      })
-      .catch(done);
+      pre.postBeforeBlock.call(this, done);
     });
     it('should return status code 200',(done)=>{
       request.put(`${baseUrl}/entry/${this.tempEntry._id}`)
@@ -250,32 +173,13 @@ describe('testing module entry-router', function(){
   });
   describe('testing for Error on PUT module', function(){
     before((done)=>{
-      authController.signup({username:'test', password:'12345'})
-      .then((user)=>{
-        this.tempUser = user;
-        done();
-      })
-      .catch(done);
+      pre.beforeBlock.call(this, done);
     });
     after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers()
-    .then(()=>done())
-    .catch(done);
+      pre.afterBlock(done);
     });
     before((done)=>{
-      request.post(`${baseUrl}/entry`)
-      .set('Authorization', `Bearer ${this.tempUser}`)
-      .send({
-        userId: this.tempUser._id,
-        title: 'testing',
-        keywords: 'test'
-      })
-      .then((res)=>{
-        this.tempEntry = res.body;
-        done();
-      })
-      .catch(done);
+      pre.postBeforeBlock.call(this, done);
     });
     it('should return status code 400 with no body',(done)=>{
       request.put(`${baseUrl}/entry/${this.tempEntry._id}`)
@@ -333,32 +237,13 @@ describe('testing module entry-router', function(){
   });
   describe('testing on DELETE module', function(){
     before((done)=>{
-      authController.signup({username:'test', password:'12345'})
-      .then((user)=>{
-        this.tempUser = user;
-        done();
-      })
-      .catch(done);
+      pre.beforeBlock.call(this, done);
     });
     after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers()
-    .then(()=>done())
-    .catch(done);
+      pre.afterBlock(done);
     });
     before((done)=>{
-      request.post(`${baseUrl}/entry`)
-      .set('Authorization', `Bearer ${this.tempUser}`)
-      .send({
-        userId: this.tempUser._id,
-        title: 'testing',
-        keywords: 'test'
-      })
-      .then((res)=>{
-        this.tempEntry = res.body;
-        done();
-      })
-      .catch(done);
+      pre.postBeforeBlock.call(this, done);
     });
     it('should return status code 204',(done)=>{
       request.del(`${baseUrl}/entry/${this.tempEntry._id}`)
@@ -372,32 +257,13 @@ describe('testing module entry-router', function(){
   });
   describe('testing for Error on DELETE module', function(){
     before((done)=>{
-      authController.signup({username:'test', password:'12345'})
-      .then((user)=>{
-        this.tempUser = user;
-        done();
-      })
-      .catch(done);
+      pre.beforeBlock.call(this, done);
     });
     after((done)=>{
-      entryController.removeAllEntries();
-      userController.removeAllUsers()
-    .then(()=>done())
-    .catch(done);
+      pre.afterBlock(done);
     });
     before((done)=>{
-      request.post(`${baseUrl}/entry`)
-      .set('Authorization', `Bearer ${this.tempUser}`)
-      .send({
-        userId: this.tempUser._id,
-        title: 'testing',
-        keywords: 'test'
-      })
-      .then((res)=>{
-        this.tempEntry = res.body;
-        done();
-      })
-      .catch(done);
+      pre.postBeforeBlock.call(this, done);
     });
     it('should return status code 404 with wrong entryId',(done)=>{
       request.del(`${baseUrl}/entry/${this.tempEntry._id+1}`)
