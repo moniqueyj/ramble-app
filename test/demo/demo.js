@@ -63,8 +63,9 @@ describe('testing auth-controller functions', function(){
       userController.removeAllUsers()
     .then(()=>done())
     .catch(done);
-    },
-    postChallengeBeforeBlock(done){
+    };
+
+  before((done) => {
       request.post(`${baseUrl}/challenges`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .send({
@@ -76,9 +77,8 @@ describe('testing auth-controller functions', function(){
         done();
       })
       .catch(done);
-    }
+    });
   };
-}
     it('should return status code 200', (done) =>{
       request.put(`${baseUrl}/challenges/${this.tempChallenge._id}`)
       .set('Authorization', `Bearer ${this.tempUser}`)
