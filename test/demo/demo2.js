@@ -54,3 +54,4 @@ describe('testing challenge router', function(){
       .catch(done);
     });
   });
+});

@@ -56,7 +56,7 @@ describe('testing auth-controller functions', function(){
           done();
         })
         .catch(done);
-      };
+      });
   
   before((done) => {
       challengeController.removeAllChallenges();
@@ -93,3 +93,4 @@ describe('testing auth-controller functions', function(){
       .catch(done);
     });
   });
+});
