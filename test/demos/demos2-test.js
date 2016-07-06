@@ -26,7 +26,6 @@ describe('testing challenge router', function(){
   before((done)=>{
     serverMaint.checkServer(done);
   });
-
   after((done)=>{
     serverMaint.closeServer(done);
   });
@@ -55,4 +54,4 @@ describe('testing challenge router', function(){
     });
   });
 });
-//57 lines 34 lines
+//56 lines 33 lines

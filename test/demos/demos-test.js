@@ -20,7 +20,6 @@ request.use(superPromise);
 
 describe('testing challenge router', function(){
   debug('demoTest');
-
   describe('testing auth-controller functions', function(){
     before((done) => {
       if(!server.isRunning){
@@ -33,7 +32,6 @@ describe('testing challenge router', function(){
       }
       done();
     });
-
     after( (done) => {
       if(server.isRunning){
         server.close( () => {
@@ -45,7 +43,6 @@ describe('testing challenge router', function(){
       }
       done();
     });
-
     before((done) => {
       authController.signup({username:'ramble', password:'rabblerabble'})
       .then((user)=>{
@@ -54,14 +51,12 @@ describe('testing challenge router', function(){
       })
       .catch(done);
     });
-
     before((done) => {
       challengeController.removeAllChallenges();
       userController.removeAllUsers()
     .then(()=>done())
     .catch(done);
     });
-
     before((done) => {
       request.post(`${baseUrl}/challenges`)
       .set('Authorization', `Bearer ${this.tempUser}`)
@@ -90,4 +85,4 @@ describe('testing challenge router', function(){
     .catch(done);
   });
 });
-//92 lines 72 lines
+//87 lines 68 lines

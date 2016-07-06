@@ -3,7 +3,7 @@
 Members:
 - Anthony Casson
 - Ron Oh
-- Courtney Lane
+- Cortney Drummond
 - Yunjoo Kim
 
 ##Project Overview
