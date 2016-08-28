@@ -2,9 +2,9 @@
 
 const mongoose = require('mongoose');
 
-const ChallengeSchema = mongoose.Schema({
+const PromptSchema = mongoose.Schema({
   content: {type: String, required: true}
   , userId: {type: mongoose.Schema.ObjectId, required: true, ref: 'User'}
 });
 
-module.exports = mongoose.model('Challenge', ChallengeSchema);
+module.exports = mongoose.model(' Prompt',  PromptSchema);

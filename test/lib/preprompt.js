@@ -3,10 +3,10 @@
 const debug = require('debug')('ramble:preamble');
 module.exports = preamble;
 
-function preamble(request, authController, challengeController, userController, server, port, baseUrl){
+function preamble(request, authController, promptController, userController, server, port, baseUrl){
   debug('preamble');
   return {
-    challengePreBlock(done){
+    promptPreBlock(done){
       authController.signup({username:'ramble', password:'rabblerabble'})
       .then((user)=>{
         this.tempUser = user;
@@ -14,21 +14,22 @@ function preamble(request, authController, challengeController, userController, 
       })
       .catch(done);
     },
-    ChallengePostBlock(done){
-      challengeController.removeAllChallenges();
+    promptPostBlock(done){
+      promptController.removeAllPrompts();
       userController.removeAllUsers()
     .then(()=>done())
     .catch(done);
     },
-    postChallengeBeforeBlock(done){
-      request.post(`${baseUrl}/challenges`)
+    postPromptBeforeBlock(done){
+      console.log('hitting postPromptBefore');
+      request.post(`${baseUrl}/prompts`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .send({
         userId: 'testing',
         content: 'test'
       })
       .then((res)=>{
-        this.tempChallenge = res.body;
+        this.tempPrompt = res.body;
         done();
       })
       .catch(done);

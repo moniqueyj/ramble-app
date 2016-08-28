@@ -3,7 +3,7 @@
 process.env.APP_SECRET = 'something123';
 process.env.MONGODB_URI = 'mongodb://localhost/rambletest';
 
-const debug = require('debug')('ramble:challenge-router-test');
+const debug = require('debug')('ramble:prompt-router-test');
 const expect = require('chai').expect;
 const request = require('superagent-use');
 const superPromise = require('superagent-promise-plugin');
@@ -15,14 +15,14 @@ const baseUrl = `http://localhost:${port}/api`;
 
 const authController = require('../controller/auth-controller');
 const userController = require('../controller/user-controller');
-const challengeController = require('../controller/challenge-controller');
+const promptController = require('../controller/prompt-controller');
 const serverMaint = require('./lib/returnManageServer')(mongoose, server, port);
-const preamble = require('./lib/prechallenge')(request, authController, challengeController, userController, server, port, baseUrl);
+const preamble = require('./lib/preprompt')(request, authController,promptController, userController, server, port, baseUrl);
 
 request.use(superPromise);
 
-describe('testing challenge router', function(){
-  debug('challengeTest');
+describe('testingprompt router', function(){
+  debug('promptTest');
   before((done)=>{
     serverMaint.checkServer(done);
   });
@@ -32,15 +32,15 @@ describe('testing challenge router', function(){
   });
 
   //test post
-  describe('testing POST module challenge-router', ()=>{
+  describe('testing POST moduleprompt-router', ()=>{
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
-    it('should return a challenge status 200', (done)=>{
-      request.post(`${baseUrl}/challenges`)
+    it('should return a prompt status 200', (done)=>{
+      request.post(`${baseUrl}/prompts`)
       .send({
         userId: this.tempUser._id,
         content:'test'
@@ -55,13 +55,13 @@ describe('testing challenge router', function(){
   });
   describe('testing for Error on POST route', ()=>{
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     it('should return and 400 with no body', (done) =>{
-      request.post(`${baseUrl}/challenges`)
+      request.post(`${baseUrl}/prompts`)
       .send({})
       .set('Authorization', `Bearer ${this.tempUser}`)
       .then(done)
@@ -78,13 +78,14 @@ describe('testing challenge router', function(){
   });
   describe('testing for Error on POST route', ()=>{
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     it('should return a 400 Error with wrong Schema contents', (done)=>{
-      request.post(`${baseUrl}/challenges`)
+      request.post(`${baseUrl}/prompts`)
       .send({
         beer: 'Universale'
       })
@@ -101,19 +102,19 @@ describe('testing challenge router', function(){
       });
     });
   });
-  describe('testing GET module challenge-router', function(){
+  describe('testing GET moduleprompt-router', function(){
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     before((done) => {
-      preamble.postChallengeBeforeBlock.call(this, done);
+      preamble.postPromptBeforeBlock.call(this, done);
     });
     it('should return status code 200', (done)=>{
       console.log(this.tempUser);
-      request.get(`${baseUrl}/challenges/${this.tempChallenge._id}`)
+      request.get(`${baseUrl}/prompts/${this.tempPrompt._id}`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .then(res => {
         expect(res.status).to.equal(200);
@@ -124,16 +125,16 @@ describe('testing challenge router', function(){
   });
   describe('testing for Error on GET module', function(){
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     before((done) => {
-      preamble.postChallengeBeforeBlock.call(this, done);
+      preamble.postPromptBeforeBlock.call(this, done);
     });
-    it('should return status code 404 wrong challenge id', (done)=>{
-      request.get(`${baseUrl}/challenges/${this.tempChallenge._id+1}`)
+    it('should return status code 404 wrongprompt id', (done)=>{
+      request.get(`${baseUrl}/prompts/${this.tempPrompt._id+1}`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .then(res => {
         expect(res.status).to.equal(404);
@@ -146,16 +147,16 @@ describe('testing challenge router', function(){
   });
   describe('testing for Error on GET module', function(){
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     before((done) => {
-      preamble.postChallengeBeforeBlock.call(this, done);
+      preamble.postPromptBeforeBlock.call(this, done);
     });
     it('should return a 400 with wrong user Id', (done) =>{
-      request.get(`${baseUrl}/challenges/${this.tempChallenge_id}`)
+      request.get(`${baseUrl}/prompts/${this.tempPompt_id}`)
       .set('Authorization', `Bearer ${this.tempUser+1}`)
       .then(res => {
         expect(res.status).to.equal(404);
@@ -166,18 +167,18 @@ describe('testing challenge router', function(){
       });
     });
   });
-  describe('testing GET all module challenge-router', function(){
+  describe('testing GET all moduleprompt-router', function(){
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     before((done) => {
-      preamble.postChallengeBeforeBlock.call(this, done);
+      preamble.postPromptBeforeBlock.call(this, done);
     });
     it('should return status code 200', (done)=>{
-      request.get(`${baseUrl}/challenges`)
+      request.get(`${baseUrl}/prompts`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .then(res => {
         expect(res.status).to.equal(200);
@@ -186,15 +187,15 @@ describe('testing challenge router', function(){
       .catch(done);
     });
   });
-  describe('testing GET all challenges Error', function(){
+  describe('testing GET allprompts Error', function(){
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     it('should return a code 404', (done)=>{
-      request.get(`${baseUrl}/challenges`)
+      request.get(`${baseUrl}/prompts`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .then(res => {
         expect(res.status).to.equal(200);
@@ -203,18 +204,18 @@ describe('testing challenge router', function(){
       .catch(done);
     });
   });
-  describe('testing PUT module on challenge-router', function(){
+  describe('testing PUT module onprompt-router', function(){
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     before((done) => {
-      preamble.postChallengeBeforeBlock.call(this, done);
+      preamble.postPromptBeforeBlock.call(this, done);
     });
     it('should return status code 200', (done) =>{
-      request.put(`${baseUrl}/challenges/${this.tempChallenge._id}`)
+      request.put(`${baseUrl}/prompts/${this.tempPrompt._id}`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .send({
         userId:this.tempUser._id,
@@ -229,16 +230,16 @@ describe('testing challenge router', function(){
   });
   describe('testing for Error on PUT', function(){
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     before((done) => {
-      preamble.postChallengeBeforeBlock.call(this, done);
+      preamble.postPromptBeforeBlock.call(this, done);
     });
     it('should return status code 400 with no body', (done)=>{
-      request.put(`${baseUrl}/entry/${this.tempChallenge._id}`)
+      request.put(`${baseUrl}/entry/${this.tempPrompt._id}`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .send({})
       .then(() => done())
@@ -253,7 +254,7 @@ describe('testing challenge router', function(){
       });
     });
     it('should return status code 404 with wrong use id', (done)=>{
-      request.put(`${baseUrl}/entry/${this.tempChallenge._id}`)
+      request.put(`${baseUrl}/entry/${this.tempPrompt._id}`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .send({
         userId: this.tempUser._id+1,
@@ -274,16 +275,16 @@ describe('testing challenge router', function(){
   });
   describe('testing on DELETE module', function(){
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     before((done) => {
-      preamble.postChallengeBeforeBlock.call(this, done);
+      preamble.postPromptBeforeBlock.call(this, done);
     });
     it('should return status code 204', (done) =>{
-      request.del(`${baseUrl}/entry/${this.tempChallenge._id}`)
+      request.del(`${baseUrl}/entry/${this.tempPrompt._id}`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .then(res => {
         expect(res.status).to.equal(204);
@@ -294,16 +295,16 @@ describe('testing challenge router', function(){
   });
   describe('testing for Error on Delete', function(){
     before((done) => {
-      preamble.challengePreBlock.call(this, done);
+      preamble.promptPreBlock.call(this, done);
     });
     after((done)=>{
-      preamble.ChallengePostBlock(done);
+      preamble.promptPostBlock(done);
     });
     before((done) => {
-      preamble.postChallengeBeforeBlock.call(this, done);
+      preamble.postPromptBeforeBlock.call(this, done);
     });
     it('should return status code 404 with wrong entryId',(done)=>{
-      request.del(`${baseUrl}/entry/${this.tempChallenge._id+1}`)
+      request.del(`${baseUrl}/entry/${this.tempPrompt._id+1}`)
       .set('Authorization', `Bearer ${this.tempUser}`)
       .then(() => done())
       .catch((err) =>{
@@ -317,7 +318,7 @@ describe('testing challenge router', function(){
       });
     });
     it('should return status code 401 with wrong password', (done)=>{
-      request.del(`${baseUrl}/entry/${this.tempChallenge._id}`)
+      request.del(`${baseUrl}/entry/${this.tempPrompt._id}`)
       .set('Authorization', `Bearer ${this.tempUser+1}`)
       .then(() => done())
       .catch((err) =>{

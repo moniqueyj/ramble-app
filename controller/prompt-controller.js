@@ -1,40 +1,40 @@
 'use strict';
 
-const debug = require('debug')('ramble:challenge-controller');
-const Challenge = require('../model/challenge');
+const debug = require('debug')('ramble:prompt-controller');
+const Prompt = require('../model/prompt');
 const httpErrors = require('http-errors');
 
-exports.createChallenge = function(challengeData) {
-  debug('createChallenge');
+exports.createPrompt = function(promptData) {
+  debug('createPrompt');
   return new Promise((resolve, reject) => {
-    new Challenge(challengeData).save()
-    .then((challenge) => {
-      resolve(challenge);
+    new Prompt(promptData).save()
+    .then((prompt) => {
+      resolve(prompt);
     })
     .catch(err => reject(httpErrors(400, err.message)));
   });
 };
 
-exports.fetchChallenge = function(id) {
-  debug('fetchChallenge');
+exports.fetchPrompt = function(id) {
+  debug('fetchPrompt');
   return new Promise((resolve, reject) => {
-    Challenge.findOne({_id: id})
-    .then(challenge => resolve(challenge))
+    Prompt.findOne({_id: id})
+    .then( prompt => resolve( prompt))
     .catch(err => reject(httpErrors(404, err.message)));
   });
 };
 
-exports.fetchAllChallenges = function(){
-  debug('fetchAllChallenges');
+exports.fetchAllPrompts = function(){
+  debug('fetchAllPrompts');
   return new Promise((resolve, reject) => {
-    Challenge.find({})
-    .then(challenges => resolve(challenges))
+    Prompt.find({})
+    .then( prompts => resolve( prompts))
     .catch(err => reject(httpErrors(404, err.message)));
   });
 };
 
-exports.updateChallenge = function(id, data) {
-  debug('updateChallenge');
+exports.updatePrompt = function(id, data) {
+  debug('updatePrompt');
   return new Promise((resolve, reject) => {
     if(!id){
       var err = httpErrors(400, err.message);
@@ -44,11 +44,11 @@ exports.updateChallenge = function(id, data) {
       err = httpErrors(400, err.message);
       return reject(err);
     }
-    Challenge.findOne({_id: id})
+    Prompt.findOne({_id: id})
   .then(() => {
-    Challenge.update(data)
+    Prompt.update(data)
     .then(() => {
-      Challenge.findOne({_id: id})
+      Prompt.findOne({_id: id})
       .then(resolve)
       .catch(reject);
     })
@@ -58,12 +58,12 @@ exports.updateChallenge = function(id, data) {
   });
 };
 
-exports.removeChallenge = function(id) {
-  debug('removeChallenge');
+exports.removePrompt = function(id) {
+  debug('removePrompt');
   return new Promise((resolve, reject) => {
-    Challenge.findOne({_id: id})
+    Prompt.findOne({_id: id})
     .then(() => {
-      Challenge.remove({_id: id})
+      Prompt.remove({_id: id})
       .then(resolve)
       .catch(err => reject(httpErrors(500, err.message)));
     })
@@ -71,6 +71,6 @@ exports.removeChallenge = function(id) {
   });
 };
 
-exports.removeAllChallenges = function(){
-  return Challenge.remove({});
+exports.removeAllPrompts = function(){
+  return Prompt.remove({});
 };
