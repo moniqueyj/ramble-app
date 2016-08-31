@@ -21,6 +21,7 @@
   "dependencies": {
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
+    "cors": "^2.8.0",
     "crypto": "0.0.3",
     "debug": "^2.2.0",
     "eslint": "^2.13.1",
