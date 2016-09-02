@@ -3,7 +3,8 @@
 const mongoose = require('mongoose');
 
 const entrySchema = mongoose.Schema({
-  title: {type: String, required: true}
+  title: {type: String, required: true},
+  body: {type: String}
   , keywords: [{type: String}]
   // ,  prompt: {type: Boolean, required: true}
   // , public: {type: Boolean, required: true}
