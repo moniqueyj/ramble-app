@@ -8,6 +8,9 @@
     "lint": "./node_modules/eslint/bin/eslint.js ./",
     "test": "./node_modules/mocha/bin/mocha "
   },
+  "engines": {
+    "node": "4.4.3"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ascasson/ramble-app.git"
