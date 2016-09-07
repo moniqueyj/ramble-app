@@ -26,7 +26,7 @@ entryRouter.get('/entry/:id', parseBearerAuth, jsonParser, function(req, res, ne
 
 entryRouter.get('/entries', parseBearerAuth, jsonParser, function(req, res, next){
   debug('GETALL');
-  entryController.fetchAllEntry()
+  entryController.fetchAllEntry(req.userId)
   .then(entries => res.json(entries))
   .catch(next);
 });
