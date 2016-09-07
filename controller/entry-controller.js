@@ -22,10 +22,10 @@ exports.fetchEntry = function(id){
   });
 };
 
-exports.fetchAllEntry = function(){
+exports.fetchAllEntry = function(userId){
   debug('fetchEntries');
   return new Promise((resolve, reject) => {
-    Entry.find({})
+    Entry.find({userId: userId})
     .then(resolve)
     .catch(err => reject(httpErrors(404, err.message)));
   });
